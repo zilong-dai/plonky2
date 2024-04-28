@@ -5,7 +5,8 @@ use core::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAss
 
 use num::{BigUint, Integer, ToPrimitive};
 use plonky2_util::{assume, branch_hint};
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize, Deserializer, Serializer};
+use alloc::string::String;
 
 use crate::ops::Square;
 use crate::types::{Field, Field64, PrimeField, PrimeField64, Sample};
@@ -20,9 +21,29 @@ const EPSILON: u64 = (1 << 32) - 1;
 ///   = 2**64 - 2**32 + 1
 ///   = 2**32 * (2**32 - 1) + 1
 /// ```
-#[derive(Copy, Clone, Serialize, Deserialize)]
+#[derive(Copy, Clone)]
 #[repr(transparent)]
 pub struct GoldilocksField(pub u64);
+
+impl Serialize for GoldilocksField {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_str(&alloc::format!("{:x}", self.to_canonical_u64()))
+    }
+}
+
+impl<'de> Deserialize<'de> for GoldilocksField {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let val : String = Deserialize::deserialize(deserializer)?;
+        
+        Ok(GoldilocksField(u64::from_str_radix(&val, 16).unwrap()))
+    }
+}
 
 impl Default for GoldilocksField {
     fn default() -> Self {
