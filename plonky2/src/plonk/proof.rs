@@ -125,6 +125,18 @@ impl<F: RichField + Extendable<D>, C: GenericConfig<D, F = F>, const D: usize>
             .map_err(anyhow::Error::msg)?;
         Ok(proof)
     }
+
+    pub fn to_json(&self, path: &str)  -> anyhow::Result<()>{
+        let file = std::fs::File::create(path).expect("Failed to create proof.json");
+        serde_json::to_writer(&file, &self)?;
+        Ok(())
+    }
+
+    pub fn from_json(path: &str)  -> anyhow::Result<Self>{
+        let file = std::fs::File::open(path).expect("Failed to read proof.json");
+        let proof: Self = serde_json::from_reader(&file)?;
+        Ok(proof)
+    }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, Eq, PartialEq)]
