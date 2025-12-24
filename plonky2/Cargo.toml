@@ -44,8 +44,8 @@ bytemuck = { workspace = true, optional = true }
 ts-rs = { workspace = true, optional = true }
 
 # Local dependencies
-plonky2_field = { version = "1.0.0", path = "../field", default-features = false }
-plonky2_maybe_rayon = { version = "1.0.0", path = "../maybe_rayon", default-features = false }
+plonky2_field = { version = "1.0.0", path = "../field" }
+plonky2_maybe_rayon = { version = "1.0.0", path = "../maybe_rayon" }
 plonky2_util = { version = "1.0.0", path = "../util", default-features = false }
 
 
